@@ -1,46 +1,36 @@
 package ua.edu.lntu.cw_4
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import ua.edu.lntu.cw_4.ui.theme.IPZ_CW_4_Kolisnichenko_DmytroTheme
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
+import androidx.recyclerview.widget.RecyclerView
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity : AppCompatActivity(), TaskListAdapter.OnTaskClickListener {
+
+    private val taskList = mutableListOf<Task>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            IPZ_CW_4_Kolisnichenko_DmytroTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
-        }
+        setContentView(R.layout.activity_main)
+
+        taskList.add(Task("Завдання #1", "Опис завдання 1", "01.01.2024", TaskStatus.ACTIVE))
+        taskList.add(Task("Завдання #2", "Опис завдання 2", "02.01.2024", TaskStatus.DONE))
+        taskList.add(Task("Завдання #3", "Опис завдання 3", "03.01.2024", TaskStatus.ACTIVE))
+
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+
+        val adapter = TaskListAdapter(taskList, this)
+        recyclerView.adapter = adapter
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    IPZ_CW_4_Kolisnichenko_DmytroTheme {
-        Greeting("Android")
+    override fun onTaskClick(position: Int) {
+        val clickedTask = taskList[position]
+        val intent = Intent(this@MainActivity, TaskDetailActivity::class.java)
+        intent.putExtra("task", clickedTask)
+        startActivity(intent)
     }
 }
